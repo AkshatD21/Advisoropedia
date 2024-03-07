@@ -6,15 +6,15 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
 
 router.post('/signup', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     const user = await User.findOne({ email })
     if (user) {
-        return res.json({ message: "user already exists" })
+        return res.json({ status: false, message: "User already exists" });
     }
 
     const hashedPassword = await bcryt.hash(password, 10)
     const newUser = new User({
-        username,
+        name,
         email,
         password: hashedPassword,
     })
@@ -28,12 +28,12 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.json({ message: "User not Registered" })
+        return res.json({ status:false, message: "User not Registered" })
     }
 
     const validPassword = await bcryt.compare(password, user.password)
     if (!validPassword) {
-        return res.json({ message: "Invalid Password" })
+        return res.json({ status:false, message: "Invalid Password" })
     }
 
     const token = jwt.sign({ userame: user.username }, process.env.KEY, { expiresIn: '1h' })
@@ -46,7 +46,7 @@ router.post('/forgot-password', async (req, res) => {
     try {
         const user = await User.findOne({ email })
         if (!user) {
-            return res.json({ message: "user not registered" })
+            return res.json({ status:false, message: "user not registered" })
         }
 
         const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '5m' })
@@ -54,7 +54,7 @@ router.post('/forgot-password', async (req, res) => {
             service: 'gmail',
             auth: {
                 user: 'akshatd212003@gmail.com',
-                pass: 'fmuj hths spto nihi'
+                pass: process.env.PASSWORD
             }
         });
 
@@ -98,7 +98,7 @@ const verifyUser = async (req, res, next)=> {
         if(!token){
             return res.json({status: false, message:"no token"})
         }
-        const decoded =  await jwt.verify(token, process.env.KEY);
+        const decoded = await jwt.verify(token, process.env.KEY);
         next()
     } catch(err){
         return res.json(err);
