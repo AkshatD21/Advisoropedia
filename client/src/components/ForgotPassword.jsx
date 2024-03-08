@@ -10,7 +10,7 @@ export const ForgotPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("https://advisoropedia-api.vercel.app/auth/forgot-password", {
+    Axios.post("http://localhost:3000/auth/forgot-password", {
       email,
     })
       .then((response) => {

@@ -12,14 +12,14 @@ const Login = () => {
   Axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("https://advisoropedia-api.vercel.app/auth/login", {
+    Axios.post("http://localhost:3000/auth/login", {
       email,
       password,
     })
       .then((response) => {
         if (response.data.status) {
           navigate("/");
-        } else {
+        } else{
           setMessage(response.data.message);
         }
       })
