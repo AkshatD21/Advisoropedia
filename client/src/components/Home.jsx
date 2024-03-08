@@ -14,13 +14,15 @@ const Home = () => {
 
   axios.defaults.withCredentials = true;
   useEffect(() => {
-    axios.get("http://localhost:3000/auth/verify").then((res) => {
-      if (res.data.status) {
-      } else {
-        navigate("/login");
-      }
-      console.log(res);
-    });
+    axios
+      .get("https://advisoropedia-api.vercel.app/auth/verify")
+      .then((res) => {
+        if (res.data.status) {
+        } else {
+          navigate("/login");
+        }
+        console.log(res);
+      });
   }, []);
 
   useEffect(() => {

@@ -15,9 +15,12 @@ const ResetPassword = () => {
       return;
     }
     e.preventDefault();
-    Axios.post("http://localhost:3000/auth/reset-password/" + token, {
-      password,
-    })
+    Axios.post(
+      "https://advisoropedia-api.vercel.app/auth/reset-password/" + token,
+      {
+        password,
+      }
+    )
       .then((response) => {
         if (response.data.status) {
           navigate("/login");

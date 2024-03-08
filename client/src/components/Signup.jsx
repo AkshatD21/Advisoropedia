@@ -34,7 +34,7 @@ const Signup = () => {
       return;
     }
 
-    Axios.post("http://localhost:3000/auth/signup", {
+    Axios.post("https://advisoropedia-api.vercel.app/auth/signup", {
       name: formData.name,
       email: formData.email,
       password: formData.password,
