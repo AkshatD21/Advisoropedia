@@ -1,11 +1,9 @@
-import express from 'express'
-import bcryt, { compare } from 'bcrypt'
-const router = express.Router();
-import { User } from '../models/User.js';
+import { User } from "../models/User.js";
+import bcryt, { compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer'
 
-router.post('/signup', async (req, res) => {
+export const signup = async (req, res) => {
     const { name, email, password } = req.body;
     const user = await User.findOne({ email })
     if (user) {
@@ -21,32 +19,32 @@ router.post('/signup', async (req, res) => {
 
     await newUser.save()
     return res.json({ status: true, message: "record registered" })
-})
+}
 
-router.post('/login', async (req, res) => {
+export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.json({ status:false, message: "User not Registered" })
+        return res.json({ status: false, message: "User not registered" })
     }
 
     const validPassword = await bcryt.compare(password, user.password)
     if (!validPassword) {
-        return res.json({ status:false, message: "Invalid Password" })
+        return res.json({ status: false, message: "Invalid Password" })
     }
 
     const token = jwt.sign({ userame: user.username }, process.env.KEY, { expiresIn: '1h' })
     res.cookie('token', token, { httpOnly: true, maxAge: 360000 })
     return res.json({ status: true, message: "login successful" })
-})
+}
 
-router.post('/forgot-password', async (req, res) => {
+export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await User.findOne({ email })
         if (!user) {
-            return res.json({ status:false, message: "user not registered" })
+            return res.json({ status: false, message: "user not registered" })
         }
 
         const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '5m' })
@@ -75,9 +73,9 @@ router.post('/forgot-password', async (req, res) => {
     } catch (err) {
         console.log(err)
     }
-})
+}
 
-router.post('/reset-password/:token', async (req, res) => {
+export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
@@ -90,28 +88,9 @@ router.post('/reset-password/:token', async (req, res) => {
     } catch (err) {
         return res.json({ message: "invalid token" })
     }
-})
-
-const verifyUser = async (req, res, next)=> {
-    try{
-        const token = req.cookies.token;
-        if(!token){
-            return res.json({status: false, message:"no token"})
-        }
-        const decoded = await jwt.verify(token, process.env.KEY);
-        next()
-    } catch(err){
-        return res.json(err);
-    }
 }
 
-router.get('/verify' , verifyUser , (req, res)=> {
-    return res.json({status: true, message: "authorized"})
-})
-
-router.get('/logout', (req, res) => {
+export const logout = (req, res) => {
     res.clearCookie('token')
     return res.json({ status: true })
-})
-
-export { router as UserRouter }
+}

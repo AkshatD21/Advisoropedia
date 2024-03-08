@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Loader from "./Loader";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ProductList from "./ProductList";
 
@@ -11,16 +12,27 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  axios.defaults.withCredentials = true;
+  useEffect(() => {
+    axios.get("http://localhost:3000/auth/verify").then((res) => {
+      if (res.data.status) {
+      } else {
+        navigate("/login");
+      }
+      console.log(res);
+    });
+  }, []);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:3000/api/products");
         setProducts(response.data);
-        setDisplayedProducts(response.data.slice(0, 20));
+        setDisplayedProducts(response.data.slice(0, 8));
         setHasMore(true);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        return console.error("Error fetching products:", error);
       } finally {
         setLoading(false);
       }
@@ -62,19 +74,25 @@ const Home = () => {
   return (
     <div className="home">
       <h1 className="my-4 text-5xl text-black-400 text-center">Product List</h1>
+      <button
+        onClick={handleLogout}
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Logout
+      </button>
+
       <InfiniteScroll
         dataLength={displayedProducts.length}
         next={fetchMoreData}
         hasMore={hasMore}
-        loader={<p>Loading...</p>}
       >
         <div className="flex flex-wrap justify-center">
           {displayedProducts.map((product) => (
             <ProductList key={product._id} product={product} />
           ))}
         </div>
+        {loading && <Loader />}
       </InfiniteScroll>
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

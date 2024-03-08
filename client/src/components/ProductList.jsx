@@ -15,17 +15,6 @@ const ProductList = ({ product }) => {
         </div>
       </div>
     </div>
-    // <div className="flex flex-wrap items-center justify-evenly">
-    //   {product.map((product) => {
-    //     return (
-    //       <ProductCard
-    //         image={product.image}
-    //         name={product.name}
-    //         price={product.current_price}
-    //       />
-    //     );
-    //   })}
-    // </div>
   );
 };
 

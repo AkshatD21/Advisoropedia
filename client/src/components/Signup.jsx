@@ -63,10 +63,9 @@ const Signup = () => {
           {message && <div className="text-red-500 mb-4">{message}</div>}
           {error && <div className="text-red-500 mb-4">{error}</div>}
 
-          <div class>
+          <div className="mb-4">
             <label
-              cName="mb-4"
-              lassName="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-2"
             >
               Full Name:
             </label>
